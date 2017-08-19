@@ -67,6 +67,7 @@ function prompt_paradox_end_segment {
 }
 
 function prompt_paradox_build_prompt {
+  local prompt_char
   if [[ -n "$SSH_CLIENT" ]] \
   || [[ -n "$SSH_TTY" ]]
   then
@@ -78,16 +79,20 @@ function prompt_paradox_build_prompt {
   prompt_paradox_start_segment default blue '$_prompt_paradox_pwd '
   prompt_paradox_start_segment default default '%(!:%F{yellow}⚡  :)%(1j:%F{cyan}⚙  :)'
 
-
   if [[ -n "$git_info" ]]
   then
     if [[ -n "$git_info" ]]
     then
       prompt_paradox_start_segment default magenta '${(e)git_info[ref]}${(e)git_info[status]}'
     fi
-    print -n "\n${editor_info[keymap]}"
+    print -n "\n"
+  fi
+  prompt_char="${editor_info[keymap]}"
+  if [ ! -z "$prompt_char"]
+  then
+    print -n "$prompt_char"
   else
-    print -n "${editor_info[keymap]}"
+    print -n "%(?;%B%F{blue};%B%F{red})$ %f%b"
   fi
 
   prompt_paradox_end_segment
@@ -162,7 +167,7 @@ function prompt_paradox_setup {
 
   # Set editor-info parameters.
   zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
-  zstyle ':prezto:module:editor:info:keymap:primary' format '%(?.%B%F{blue}.%B%F{red})$ %f%b'
+  zstyle ':prezto:module:editor:info:keymap:primary' format ''
   zstyle ':prezto:module:editor:info:keymap:primary:overwrite' format '%F{red}♺%f'
   zstyle ':prezto:module:editor:info:keymap:alternate' format '%B%F{red}❮%f%b'
 
