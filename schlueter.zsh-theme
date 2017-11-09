@@ -88,7 +88,7 @@ function prompt_paradox_build_prompt {
     print -n "\n"
   fi
   prompt_char="${editor_info[keymap]}"
-  if [ ! -z "$prompt_char"]
+  if [ ! -z "$prompt_char" ]
   then
     print -n "$prompt_char"
   else
