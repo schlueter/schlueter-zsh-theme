@@ -85,7 +85,7 @@ function prompt_paradox_build_prompt {
     then
       prompt_paradox_start_segment default magenta '${(e)git_info[ref]}${(e)git_info[status]}'
     fi
-    print -n "\n"
+    print -n " \n"
   fi
   prompt_char="${editor_info[keymap]}"
   if [ ! -z "$prompt_char" ]
