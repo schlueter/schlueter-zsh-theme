@@ -66,6 +66,10 @@ function prompt_paradox_end_segment {
   _prompt_paradox_current_bg=''
 }
 
+function prompt_process_info {
+  prompt_paradox_start_segment default default '%(!:%F{yellow}⚡  :)%(1j:%F{cyan}⚙  :)'
+}
+
 function prompt_paradox_build_prompt {
   local prompt_char
   if [[ -n "$SSH_CLIENT" ]] \
@@ -76,15 +80,14 @@ function prompt_paradox_build_prompt {
     prompt_paradox_start_segment yellow black '%M'
   fi
 
-  prompt_paradox_start_segment default blue '$_prompt_paradox_pwd '
-  prompt_paradox_start_segment default default '%(!:%F{yellow}⚡  :)%(1j:%F{cyan}⚙  :)'
-
-  if [[ -n "$git_info" ]]
+  if [[ -z "$git_info" ]]
   then
-    if [[ -n "$git_info" ]]
-    then
-      prompt_paradox_start_segment default magenta '${(e)git_info[ref]}${(e)git_info[status]}'
-    fi
+    prompt_paradox_start_segment default blue '$_abbrev_pwd '
+    prompt_process_info
+  else
+    prompt_paradox_start_segment default blue '$_unabbrev_pwd '
+    prompt_process_info
+    prompt_paradox_start_segment default magenta '${(e)git_info[ref]}${(e)git_info[status]}'
     print -n " \n"
   fi
   prompt_char="${editor_info[keymap]}"
@@ -103,10 +106,11 @@ function prompt_paradox_pwd {
 
   if [[ "$pwd" == (#m)[/~] ]]
   then
-    _prompt_paradox_pwd="$MATCH"
-    unset MATCH
+    _abbrev_pwd="~"
+    _unabbrev_pwd="~"
   else
-    _prompt_paradox_pwd="${${${${(@j:/:M)${(@s:/:)pwd}##.#?}:h}%/}//\%/%%}/${${pwd:t}//\%/%%}"
+    _unabbrev_pwd="$pwd"
+    _abbrev_pwd="${${${${(@j:/:M)${(@s:/:)pwd}##.#?}:h}%/}//\%/%%}/${${pwd:t}//\%/%%}"
   fi
 }
 
@@ -187,8 +191,9 @@ function prompt_paradox_setup {
   zstyle ':prezto:module:git:info:stashed' format ' S'
   zstyle ':prezto:module:git:info:unmerged' format ' ═'
   zstyle ':prezto:module:git:info:untracked' format ' ?'
+  zstyle ':prezto:module:git:info:tag_prefix' format 'Ⓣ '
   zstyle ':prezto:module:git:info:keys' format \
-    'ref' '$(coalesce "%b" "%p" "%c")' \
+    'ref' '%c $(coalesce "%b" "%p")' \
     'status' '%s%D%A%B%S%a%d%m%r%U%u'
 
   # Define prompts.
